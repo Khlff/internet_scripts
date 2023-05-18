@@ -1,6 +1,7 @@
 import os
 
 import requests
+from tqdm import tqdm
 
 from vk_worker import VKPhotoWorker, VKException
 
@@ -11,11 +12,14 @@ def download_images(urls: list, path_to_download: str):
     :param urls: pictures urls list
     :param path_to_download:
     """
-    for index, url in enumerate(urls):
+    for index, url in tqdm(enumerate(urls), total=len(urls),
+                           desc="Downloading images"):
         try:
             response = requests.get(url)
-            with open(os.path.join(path_to_download, str(index) + '.jpg'),
-                      'wb') as f:
+            with open(
+                    os.path.join(path_to_download, str(index) + '.jpg'),
+                    'wb'
+            ) as f:
                 f.write(response.content)
         except requests.exceptions.RequestException as e:
             print(e.strerror)
